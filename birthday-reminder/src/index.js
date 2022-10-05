@@ -1,11 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import BirthdayReminderApp from "./BirthdayReminderApp"
+import BdayReminderList from "./list";
 import "./style.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BirthdayReminderApp />
+    <h1>Birthday Reminder</h1>
+    <section className="container">
+      <BdayReminderList />
+    </section>
   </React.StrictMode>
 );
