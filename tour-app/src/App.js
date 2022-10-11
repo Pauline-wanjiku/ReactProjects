@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Loading from "./loading";
+import Tours from "./tours";
 import "./style.css";
 
 //To do
@@ -13,64 +15,62 @@ import "./style.css";
 const url = "https://course-api.com/react-tours-project";
 function App() {
   const [tour, setTour] = useState([]);
-  const [isInfo, setInfo] = useState(false);
   const [isLoading, setisLoading] = useState(true);
 
+  const removeItem = (id) => {
+    const newTour = tour.filter((tour)=>tour.id !== id)
+    setTour(newTour)
+    
+    
+  }
   //fetch data
   const fetchDataTour = async () => {
-    const response = await fetch(url);
-    if (response.status >= 200 && response.status <= 299) {
+    try {
+      const response = await fetch(url);
       const dataFetched = await response.json();
       setTour(dataFetched);
+      setisLoading(false);
+      
+    } catch (error) {
       setisLoading(false)
-    }
-    else {
-      setisLoading(isLoading)
+      console.log(error)
+      
     }
   };
   //useEffect for fetching data
   useEffect(() => {
     fetchDataTour();
   }, []);
+
+
   if (isLoading) {
-    return <h4>Loading...</h4>
-    
+    return (
+      <main>
+        <Loading />
+      </main>
+    );
   }
-  
-  const deleteItem = (id) => {
-    const newList = tour.filter((eachId) => eachId != id)
-    setTour(newList)
+  if (tour.length === 0) {
+    return (
+      <main>
+        <div className="title">
+          <h4>Available Tours: {tour.length}</h4>
+          <button className="btn" onClick={() => fetchDataTour()}>
+            Refresh
+          </button>
+        </div>
+      </main>
+    );
 
-    
   }
-  return (
-    <>
-      <h1>Tours</h1>
-      <h4>Available Tours: {tour.length}</h4>
-      <ul>
-        {tour.map((tours) => {
-          const { id, name, info, image, price } = tours;
-          return (
-            <>
-              <section key={id}>
-                <li >
-                  <img src={image} alt={name} />
+    return (
+      <main>
+        <Tours tours={tour} removeTour={removeItem} />
+      </main>
+    );
 
-                  <h3 className="tour-title">{name}</h3>
-                  <h4 className="tour-price">{price}</h4>
-                  <button className="single-tour" onClick={() => setInfo(!isInfo)}>
-                    More information
-                  </button>
-                  {isInfo && info}
-                  <button className="delete-btn" onClick={()=>deleteItem(id)}>Remove From List</button>
-                </li>
-              </section>
-            </>
-          );
-        })}
-      </ul>
-    </>
-  );
+
+ 
 }
 
 export default App;
